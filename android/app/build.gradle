@@ -73,9 +73,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.camoutdoornew"
+    namespace "com.campoutdoor"
     defaultConfig {
-        applicationId "com.camoutdoornew"
+        applicationId "com.campoutdoor"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
