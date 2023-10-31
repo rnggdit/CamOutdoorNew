@@ -101,4 +101,20 @@ export const CategoryList = [
       image:
         'https://areioutdoorgear.co.id/wp-content/uploads/2023/07/WhatsApp-Image-2023-07-06-at-13.59.15-4-768x768.jpeg',
     },
+    {
+      id: 13,
+      title: 'EIGER PANGOLIN 4P TENT',
+      category: 'Tenda',
+      image:
+        'https://thumbor.sirclocdn.com/unsafe/293x293/filters:format(webp)/magento.eigeradventure.com/media/catalog/product/cache/c6e678ff4843a2306873597ce4b1ecc2/t/e/tenda-camping-4-orang-pangolin-4p-tent.jpg',
+      },
   ];
+
+  export const ProfileData = {
+    profilePict:
+      'https://thumb.viva.id/intipseleb/1265x711/2023/03/07/64070b4ca817b-anisa-rahim.jpg',
+    name: 'Anisa Rahim',
+    createdAt: 'Gold',
+    following: 609000,
+    follower: 971,
+  };

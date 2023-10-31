@@ -1,6 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {Receipt21, Clock, Message} from 'iconsax-react-native';
 import React from 'react';
 import { fontType, colors } from '../theme';
 
@@ -62,6 +61,8 @@ const styles = StyleSheet.create({
   cardImage: {
     width: 150,
     height: 150,
+    borderWidth: 1,
+    borderColor: 'gray',
     borderRadius: 10,
     resizeMode: 'cover',
   },
