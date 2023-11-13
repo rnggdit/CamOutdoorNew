@@ -2,10 +2,13 @@ import {StyleSheet, Text, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import React from 'react';
 import { fontType, colors } from '../theme';
+import {useNavigation} from '@react-navigation/native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
 
 const ItemSmall = ({item}) => {
   return (
-    <View style={styles.cardItem}>
+    <TouchableOpacity style={styles.cardItem} onPress={() => navigation.navigate('BlogDetail', {blogId: item.id})}>
       <FastImage
         style={styles.cardImage}
         source={{
@@ -27,9 +30,11 @@ const ItemSmall = ({item}) => {
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
+
+const navigation = useNavigation();
 
 export default ItemSmall;
 const styles = StyleSheet.create({

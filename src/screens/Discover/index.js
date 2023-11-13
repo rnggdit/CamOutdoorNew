@@ -2,7 +2,7 @@ import {StyleSheet, Text, View, ScrollView, FlatList} from 'react-native';
 import React from 'react';
 import {BlogList} from '../../../data';
 import {ItemSmall} from '../../components'; 
-import {SearchNormal1, Home, ShoppingCart, Wallet, Notification, Profile} from 'iconsax-react-native';
+import {SearchNormal1, Home, ShoppingCart, Wallet, Notification, Profile, Lovely, LocationDiscover} from 'iconsax-react-native';
 import { fontType, colors } from '../../theme';
 
 const data = [
@@ -58,13 +58,6 @@ const Discover = () => {
           ))}
         </View>
       </ScrollView>
-      <View style={styles.header}>
-        <Home color={colors.black()} variant="Linear" size={25} />
-        <ShoppingCart color={colors.black()} variant="Linear" size={25} />
-        <Wallet color={colors.black()} variant="Linear" size={25} />
-        <Notification color={colors.black()} variant="Linear" size={25} />
-        <Profile color={colors.black()} variant="Linear" size={25} />  
-      </View>
     </View>
   );
 };

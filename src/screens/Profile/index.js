@@ -1,5 +1,5 @@
 import {ScrollView, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import {Bank, HambergerMenu, Home, Home3, Lock1, Lovely, Notification, Profile, ProfileCircle, Setting2, ShoppingCart, Wallet, Wallet2} from 'iconsax-react-native';
+import {Bank, HambergerMenu, Home, Home3, LocationDiscover, Lock1, Lovely, Notification, Profile, ProfileCircle, Setting2, ShoppingCart, Wallet, Wallet2} from 'iconsax-react-native';
 import React from 'react';
 import FastImage from 'react-native-fast-image';
 import {ProfileData, BlogList} from '../../../data';
@@ -49,7 +49,7 @@ const ProfileApp = () => {
           <View style={{gap: 5, alignItems: 'baseline'}}>
             <Text style={profile.name}>{ProfileData.name}</Text>
             <Text style={profile.info}>
-              Member {ProfileData.createdAt}
+              Member {ProfileData.member}
             </Text>
             <View style={{flexDirection: 'row', gap: 20}}>
             <View style={{alignItems: 'center', gap: 5}}>
@@ -109,13 +109,6 @@ const ProfileApp = () => {
           ))}
         </View>
       </ScrollView>
-      <View style={styles.header2}>
-        <Home color={colors.black()} variant="Linear" size={25} />
-        <ShoppingCart color={colors.black()} variant="Linear" size={25} />
-        <Wallet color={colors.black()} variant="Linear" size={25} />
-        <Lovely color={colors.black()} variant="Linear" size={25} />
-        <Profile color={colors.black()} variant="Linear" size={25} />  
-      </View>
     </View>
   );
 };

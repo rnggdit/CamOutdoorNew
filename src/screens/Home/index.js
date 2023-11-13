@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput } from 'react-native';
-import { Element3, HambergerMenu, Home, Icon, Notification, Profile, SearchFavorite, SearchFavorite1, SearchNormal, SearchNormal1, ShoppingCart, Wallet } from 'iconsax-react-native';
+import { Element3, HambergerMenu, Home, Icon, LocationDiscover, Lovely, Notification, Profile, SearchFavorite, SearchFavorite1, SearchNormal, SearchNormal1, ShoppingCart, Wallet } from 'iconsax-react-native';
 import { BlogList, CategoryList } from '../../../data';
 import { fontType, colors } from '../../theme';
 import { ListHorizontal, ItemSmall } from '../../components';
@@ -84,13 +84,6 @@ export default function HomeApp() {
           </View>
         </View>
       <ListBlog />
-      <View style={styles.header}>
-        <Home color={colors.black()} variant="Linear" size={25} />
-        <ShoppingCart color={colors.black()} variant="Linear" size={25} />
-        <Wallet color={colors.black()} variant="Linear" size={25} />
-        <Notification color={colors.black()} variant="Linear" size={25} />
-        <Profile color={colors.black()} variant="Linear" size={25} />  
-      </View>
     </View>
   );
 }
