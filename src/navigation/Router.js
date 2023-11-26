@@ -12,7 +12,8 @@ function MainApp() {
     <Tab.Navigator
       screenOptions={{
         tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: colors.blue(),
+        tabBarActiveTintColor: colors.black(),
+        tabBarActiveTintColor: colors.black(),
         tabBarInactiveTintColor: colors.black(),
         tabBarStyle: {
             backgroundColor: '#ffffff',
@@ -78,7 +79,7 @@ function MainApp() {
           tabBarLabel: 'Wishlist',
           tabBarIcon: ({focused, color}) => (
             <Heart
-              color={color}
+              color={color = "red"}
               variant={focused ? 'Bold' : 'Linear'}
               size={24}
             />

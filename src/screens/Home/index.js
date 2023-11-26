@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
-    fontFamily: fontType['Pjs-ExtraBold'],
+    fontFamily: fontType['Philo-Bold'],
     color: colors.black(),
   },
   listCategory: {
