@@ -1,9 +1,11 @@
 import React from 'react';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Discover, BlogDetail, HomeApp, ProfileApp, Wishlist, Cart} from '../screens';
-import {Home3, LocationDiscover, ProfileCircle, Heart, ShoppingCart} from 'iconsax-react-native'; 
+import {Discover, BlogDetail, HomeApp, ProfileApp, Wishlist, Cart, Search} from '../screens';
+import {Home3, LocationDiscover, ProfileCircle, Heart, ShoppingCart, AddCircle} from 'iconsax-react-native'; 
 import { fontType, colors } from '../theme';
+import AddBlogForm from '../screens/AddProduct';
+import AddProduct from '../screens/AddProduct';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -16,10 +18,11 @@ function MainApp() {
         tabBarActiveTintColor: colors.black(),
         tabBarInactiveTintColor: colors.black(),
         tabBarStyle: {
-            backgroundColor: '#ffffff',
+          backgroundColor: '#ffffff',
           paddingBottom: 10,
           paddingTop: 10,
           height: 60,
+          borderColor: '#000000',
         },
         tabBarLabelStyle: {
           marginTop: 5,
@@ -42,21 +45,6 @@ function MainApp() {
           headerShown: false,
         }}
       />
-    {/* <Tab.Screen
-        name="Cart"
-        component={Cart}
-        options={{
-          tabBarLabel: 'Cart',
-          tabBarIcon: ({focused, color}) => (
-            <ShoppingCart
-              color={color}
-              variant={focused ? 'Bold' : 'Linear'}
-              size={24}
-            />
-          ),
-          headerShown: false,
-        }}
-      /> */}
       <Tab.Screen
         name="Discover"
         component={Discover}
@@ -73,13 +61,28 @@ function MainApp() {
         }}
       />
       <Tab.Screen
+        name="AddProduct"
+        component={AddProduct}
+        options={{
+          tabBarLabel: 'Add Product',
+          tabBarIcon: ({focused, color}) => (
+            <AddCircle
+              color={color}
+              variant={focused ? 'Bold' : 'Linear'}
+              size={24}
+            />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
         name="Wishlist"
         component={Wishlist}
         options={{
           tabBarLabel: 'Wishlist',
           tabBarIcon: ({focused, color}) => (
             <Heart
-              color={color = "red"}
+              color={color = "black"}
               variant={focused ? 'Bold' : 'Linear'}
               size={24}
             />
@@ -102,6 +105,7 @@ function MainApp() {
           headerShown: false,
         }}
       />
+      
     </Tab.Navigator>
   );
 }
@@ -125,6 +129,26 @@ const Router = () => {
           ...TransitionPresets.SlideFromRightIOS,
         }}
       />
+      <Stack.Screen
+        name="SearchPage"
+        component={Search}
+        options={{
+          headerShown: false,
+          presentation: 'transparentModal',
+        }}
+      />
+      <Stack.Screen
+              name="AddProduct"
+              component={AddProduct}
+              options={{
+                headerShown: false,
+                animationEnabled: true,
+                animationTypeForReplace: 'pop',
+                gestureEnabled: true,
+                gestureDirection : 'horizontal',
+                ...TransitionPresets.SlideFromRightIOS,
+              }}
+            />
     </Stack.Navigator>
   );
 };

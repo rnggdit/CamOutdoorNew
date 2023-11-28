@@ -1,9 +1,3 @@
-// import * as React from 'react';
-// import {Discover} from './src/screens';
-// export default function App() {
-//   return <Discover />;
-// }
-
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import Router from './src/navigation/Router';

@@ -1,17 +1,28 @@
-import {StyleSheet, Text, View, ScrollView, FlatList} from 'react-native';
-import React from 'react';
+import {StyleSheet, Text, View, ScrollView, FlatList, Animated, TouchableWithoutFeedback} from 'react-native';
+import React, {useRef} from 'react';
 import {BlogList} from '../../../data';
 import {ItemSmall} from '../../components'; 
-import {SearchNormal1, Home, ShoppingCart, Wallet, Notification, Profile, Lovely, LocationDiscover} from 'iconsax-react-native';
+import {SearchNormal1} from 'iconsax-react-native';
 import { fontType, colors } from '../../theme';
+import { useNavigation } from "@react-navigation/native";
+
+const navigation = useNavigation();
+
+const scrollY = useRef(new Animated.Value(0)).current;
+const diffClampY = Animated.diffClamp(scrollY, 0, 142);
+const recentY = diffClampY.interpolate({
+    inputRange: [0, 142],
+    outputRange: [0, -142],
+    extrapolate: 'clamp',
+  });
 
 const data = [
   {id: 1, label: 'Tenda'},
   {id: 2, label: 'Tas'},
   {id: 3, label: 'Peralatan'},
   {id: 4, label: 'Sepatu'},
-  {id: 5, label: 'Jaket'},
-  {id: 6, label: 'Baju'},
+  {id: 5, label: 'Baju'},
+  {id: 6, label: 'Jaket'},
 ];
 
 const ItemRecent = ({item}) => {
@@ -41,32 +52,38 @@ const Discover = () => {
   const recentBlog = BlogList.slice(5);
   return (
     <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={() => navigation.navigate("SearchPage")}>
       <View style={styles.header}>
         <View style={styles.bar}>
           <SearchNormal1 size={18} color={colors.grey(0.5)} variant="Linear" />
           <Text style={styles.placeholder}>Search</Text>
         </View>
       </View>
-      <View>
+      </TouchableWithoutFeedback>
+      <Animated.View style={[recent.container, {transform: [{translateY: recentY}]}]}>
         <Text style={recent.text}>Recent Search</Text>
         <FlatListRecent />
-      </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.listCard}>
-          {recentBlog.map((item, index) => (
-            <ItemSmall style={styles.card2} item={item} key={index} />
-          ))}
-        </View>
-      </ScrollView>
+      </Animated.View>
+      <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{nativeEvent: {contentOffset: {y: scrollY}}}],
+          {useNativeDriver: true},
+        )}
+        contentContainerStyle={{paddingTop: 142}}>
+          <View style={styles.listCard}>
+              {recentBlog.map((item, index) => (
+                  <ItemSmall item={item} key={index} />
+              ))}
+          </View>
+      </Animated.ScrollView>
     </View>
   );
 };
 
 export default Discover;
-
-
 const styles = StyleSheet.create({
-  listCard: {
+  listCard: { 
     paddingHorizontal: 20,
     paddingVertical: 10,
     gap: 35,
@@ -75,22 +92,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap'
   },
-  card2: {
-    width: '50%',
-  },
   container: {
     flex: 1,
     backgroundColor: colors.white(),
   },
   header: {
     paddingHorizontal: 24,
-    justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
     height: 52,
-    elevation: 8,
     paddingTop: 8,
-    paddingBottom: 4
+    paddingBottom: 4,
+    position: 'absolute',
+    top: 0,
+    zIndex: 1000,
+    right: 0,
+    left: 0,
+    backgroundColor: colors.white(),
   },
   bar: {
     flexDirection: 'row',
@@ -108,6 +126,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 });
+
 const recent = StyleSheet.create({
   button: {
     paddingHorizontal: 20,
@@ -128,5 +147,14 @@ const recent = StyleSheet.create({
     color: colors.black(),
     paddingVertical: 5,
     paddingHorizontal: 24,
+  },
+  container:{
+    position: 'absolute',
+    backgroundColor: colors.white(),
+    zIndex: 999,
+    top: 52,
+    left: 0,
+    right: 0,
+    elevation: 1000,
   },
 });

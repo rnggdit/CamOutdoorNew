@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   title: {
     alignItems: 'center',
     fontSize: 20,
-    fontFamily: fontType['Pjs-ExtraBold'],
+    fontFamily: fontType['Philo-Bold'],
     color: colors.black(),
   },
   listCategory: {

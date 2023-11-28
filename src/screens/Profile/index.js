@@ -5,6 +5,10 @@ import FastImage from 'react-native-fast-image';
 import {ProfileData, BlogList} from '../../../data';
 import {ItemSmall} from '../../components';
 import { fontType, colors } from '../../theme';
+import { Edit } from "iconsax-react-native";
+import { useNavigation } from "@react-navigation/native";
+
+const navigation = useNavigation();
 
 const formatNumber = number => {
   if (number >= 1000000000) {
@@ -156,6 +160,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
+  floatingButton: {
+    backgroundColor: colors.blue(),
+    padding: 15,
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    borderRadius: 10,
+    shadowColor: colors.blue(),
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 8,
+  },
 });
 
 const profile = StyleSheet.create({
@@ -163,7 +184,7 @@ const profile = StyleSheet.create({
   name: {
     color: colors.black(),
     fontSize: 20,
-    fontFamily: fontType['Pjs-Bold'],
+    fontFamily: fontType['Philo-Bold'],
     textTransform:'capitalize'
   },
   info: {
@@ -195,7 +216,7 @@ const profile = StyleSheet.create({
   tag4: {
     paddingHorizontal: 0,
     fontSize: 25,
-    fontFamily: fontType['Pjs-Bold'],
+    fontFamily: fontType['Philo-Bold'],
     color: colors.black(),
   },
   buttonEdit: {

@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput, TouchableWithoutFeedback } from 'react-native';
 import { Element3, HambergerMenu, Home, Icon, LocationDiscover, Lovely, Notification, Profile, SearchFavorite, SearchFavorite1, SearchNormal, SearchNormal1, ShoppingCart, Wallet } from 'iconsax-react-native';
 import { BlogList, CategoryList } from '../../../data';
 import { fontType, colors } from '../../theme';
 import { ListHorizontal, ItemSmall } from '../../components';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { useNavigation } from "@react-navigation/native";
+
+const navigation = useNavigation();
 
 const ListBlog = () => {
   const horizontalData = BlogList.slice(0, 5);
@@ -75,13 +78,12 @@ export default function HomeApp() {
           flexDirection: 'row',
           paddingHorizontal: 20,
         }}>
-          <View style={styles.inputContainer}>
-            <SearchNormal1 color={colors.black()} variant="Linear" size={20}/>
-            <TextInput
-                style={{flex: 1, fontSize: 18, paddingHorizontal: 10}}
-                placeholder="Search"
-                />
+          <TouchableWithoutFeedback onPress={() => navigation.navigate("SearchPage")}>
+          <View style={styles.bar}>
+          <SearchNormal1 size={18} color={colors.grey(0.5)} variant="Linear" />
+          <Text style={styles.placeholder}>Search</Text>
           </View>
+          </TouchableWithoutFeedback>
         </View>
       <ListBlog />
     </View>
@@ -93,6 +95,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white(),
   },
+  bar: {
+    flexDirection: 'row',
+    padding: 10,
+    gap: 10,
+    alignItems: 'center',
+    backgroundColor: colors.grey(0.05),
+    borderRadius: 10,
+    flex: 1,
+  },
   header: {
     paddingHorizontal: 24,
     justifyContent: 'space-between',
@@ -101,7 +112,7 @@ const styles = StyleSheet.create({
     height: 52,
     elevation: 8,
     paddingTop: 8,
-    paddingBottom: 4
+    paddingBottom: 4,
   },
   title: {
     fontSize: 30,
