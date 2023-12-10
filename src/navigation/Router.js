@@ -1,10 +1,9 @@
 import React from 'react';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Discover, BlogDetail, HomeApp, ProfileApp, Wishlist, Cart, Search} from '../screens';
+import {Discover, BlogDetail, HomeApp, ProfileApp, Wishlist, Cart, Search, EditProduct} from '../screens';
 import {Home3, LocationDiscover, ProfileCircle, Heart, ShoppingCart, AddCircle} from 'iconsax-react-native'; 
 import { fontType, colors } from '../theme';
-import AddBlogForm from '../screens/AddProduct';
 import AddProduct from '../screens/AddProduct';
 
 const Tab = createBottomTabNavigator();
@@ -149,6 +148,18 @@ const Router = () => {
                 ...TransitionPresets.SlideFromRightIOS,
               }}
             />
+        <Stack.Screen
+              name="EditBlog"
+              component={EditProduct}
+              options={{
+                headerShown: false,
+                animationEnabled: true,
+                animationTypeForReplace: 'pop',
+                gestureEnabled: true,
+                gestureDirection: 'horizontal',
+                ...TransitionPresets.SlideFromRightIOS,
+              }}
+      />
     </Stack.Navigator>
   );
 };

@@ -1,13 +1,16 @@
-import React, { useState, useRef } from 'react';
-import { ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput, TouchableWithoutFeedback } from 'react-native';
-import { Element3, HambergerMenu, Home, Icon, LocationDiscover, Lovely, Notification, Profile, SearchFavorite, SearchFavorite1, SearchNormal, SearchNormal1, ShoppingCart, Wallet } from 'iconsax-react-native';
+import React, { useState, useCallback} from 'react';
+import FastImage from 'react-native-fast-image';
+import { ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput, TouchableWithoutFeedback, ActivityIndicator, RefreshControl } from 'react-native';
+import { Edit, Setting2, Element3, HambergerMenu, Home, Icon, LocationDiscover, Lovely, Notification, Profile, SearchFavorite, SearchFavorite1, SearchNormal, SearchNormal1, ShoppingCart, Wallet } from 'iconsax-react-native';
 import { BlogList, CategoryList } from '../../../data';
 import { fontType, colors } from '../../theme';
 import { ListHorizontal, ItemSmall } from '../../components';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { useNavigation } from "@react-navigation/native";
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
+import {formatNumber} from '../../utils/formatNumber'
+import axios from 'axios';
 
-const navigation = useNavigation();
+
 
 const ListBlog = () => {
   const horizontalData = BlogList.slice(0, 5);
@@ -19,11 +22,11 @@ const ListBlog = () => {
         <View style={styles.listCard}>
           <FlatListCategory/>
         </View>
-        <View style={styles.listCard}>
+        {/* <View style={styles.listCard}>
           {verticalData.map((item, index) => (
             <ItemSmall style={styles.card2} item={item} key={index} />
           ))}
-        </View>
+        </View> */}
       </View>
     </ScrollView>
   );
@@ -64,14 +67,44 @@ const FlatListCategory = () => {
   );
 };
 
-export default function HomeApp() {
+const HomeApp = () => {
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(true);
+  const [blogData, setBlogData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const getDataBlog = async () => {
+    try {
+      const response = await axios.get(
+        'https://65718b65d61ba6fcc012e285.mockapi.io/camstoreapp/product',
+      );
+      setBlogData(response.data);
+      setLoading(false)
+    } catch (error) {
+        console.error(error);
+    }
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      getDataBlog()
+      setRefreshing(false);
+    }, 1500);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      getDataBlog();
+    }, [])
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>CampOutdoor</Text>
-        <HambergerMenu color={colors.black()} variant="Linear" size={25} />
-      </View>
-      <View
+           <Text style={styles.title}>CampOutdoor</Text>
+           <HambergerMenu color={colors.black()} variant="Linear" size={25} />
+         </View>
+       <View
         style={{
           marginTop: 5,
           marginBottom: 5,
@@ -85,10 +118,30 @@ export default function HomeApp() {
           </View>
           </TouchableWithoutFeedback>
         </View>
-      <ListBlog />
+        
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 0,
+          gap: 0,
+          paddingVertical: 0,
+        }} refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+        <ListBlog />
+        <View style={styles.listCard}>
+          {loading ? (
+            <ActivityIndicator size={'large'} color={colors.blue()} />
+          ) : (
+            blogData.map((item, index) => <ItemSmall style={styles.card2} item={item} key={index} />)
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
-}
+};
+export default HomeApp;
+
 
 const styles = StyleSheet.create({
   container: {
@@ -148,7 +201,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
 });
-
 const category = StyleSheet.create({
   item: {
     paddingHorizontal: 15,
