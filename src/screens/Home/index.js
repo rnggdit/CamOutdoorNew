@@ -1,4 +1,4 @@
-import React, { useState, useCallback} from 'react';
+import React, { useEffect, useState, useCallback} from 'react';
 import FastImage from 'react-native-fast-image';
 import { ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput, TouchableWithoutFeedback, ActivityIndicator, RefreshControl } from 'react-native';
 import { Edit, Setting2, Element3, HambergerMenu, Home, Icon, LocationDiscover, Lovely, Notification, Profile, SearchFavorite, SearchFavorite1, SearchNormal, SearchNormal1, ShoppingCart, Wallet } from 'iconsax-react-native';
@@ -7,8 +7,8 @@ import { fontType, colors } from '../../theme';
 import { ListHorizontal, ItemSmall } from '../../components';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
-import {formatNumber} from '../../utils/formatNumber'
-import axios from 'axios';
+import firestore from '@react-native-firebase/firestore';
+import {formatNumber} from '../../utils/formatNumber';
 
 
 
@@ -22,11 +22,6 @@ const ListBlog = () => {
         <View style={styles.listCard}>
           <FlatListCategory/>
         </View>
-        {/* <View style={styles.listCard}>
-          {verticalData.map((item, index) => (
-            <ItemSmall style={styles.card2} item={item} key={index} />
-          ))}
-        </View> */}
       </View>
     </ScrollView>
   );
@@ -72,31 +67,41 @@ const HomeApp = () => {
   const [loading, setLoading] = useState(true);
   const [blogData, setBlogData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const getDataBlog = async () => {
-    try {
-      const response = await axios.get(
-        'https://65718b65d61ba6fcc012e285.mockapi.io/camstoreapp/product',
-      );
-      setBlogData(response.data);
-      setLoading(false)
-    } catch (error) {
-        console.error(error);
-    }
-  };
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('product')
+      .onSnapshot(querySnapshot => {
+        const blogs = [];
+        querySnapshot.forEach(documentSnapshot => {
+          blogs.push({
+            ...documentSnapshot.data(),
+            id: documentSnapshot.id,
+          });
+        });
+        setBlogData(blogs);
+        setLoading(false);
+      });
+    return () => subscriber();
+  }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
-      getDataBlog()
+      firestore()
+        .collection('product')
+        .onSnapshot(querySnapshot => {
+          const blogs = [];
+          querySnapshot.forEach(documentSnapshot => {
+            blogs.push({
+              ...documentSnapshot.data(),
+              id: documentSnapshot.id,
+            });
+          });
+          setBlogData(blogs);
+        });
       setRefreshing(false);
     }, 1500);
   }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      getDataBlog();
-    }, [])
-  );
 
   return (
     <View style={styles.container}>

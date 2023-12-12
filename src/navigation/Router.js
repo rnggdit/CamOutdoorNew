@@ -1,10 +1,10 @@
 import React from 'react';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Discover, BlogDetail, HomeApp, ProfileApp, Wishlist, Cart, Search, EditProduct} from '../screens';
-import {Home3, LocationDiscover, ProfileCircle, Heart, ShoppingCart, AddCircle} from 'iconsax-react-native'; 
+import {Discover, HomeApp, ProfileApp, Wishlist, Search, EditProduct, AddProduct, ProductDetail} from '../screens';
+import {Home3, LocationDiscover, ProfileCircle, Heart, AddCircle} from 'iconsax-react-native'; 
 import { fontType, colors } from '../theme';
-import AddProduct from '../screens/AddProduct';
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -117,8 +117,8 @@ const Router = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen
-        name="BlogDetail"
-        component={BlogDetail}
+        name="ProductDetail"
+        component={ProductDetail}
         options={{
           headerShown: false, 
           animationEnabled: true,
@@ -149,7 +149,7 @@ const Router = () => {
               }}
             />
         <Stack.Screen
-              name="EditBlog"
+              name="EditProduct"
               component={EditProduct}
               options={{
                 headerShown: false,

@@ -1,65 +1,74 @@
 import {StyleSheet, Text, View, ScrollView, TouchableOpacity, Animated, ActivityIndicator} from 'react-native';
 import React, {useState, useRef, useEffect} from 'react';
-import {ArrowLeft, Like1, Receipt21, Message, Share, More, Heart, ArrowCircleLeft, ArrowCircleLeft2} from 'iconsax-react-native';
+import {ArrowLeft, Like1, Receipt21, Message, Share, More, Heart} from 'iconsax-react-native';
 import {useNavigation} from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
 import {fontType, colors} from '../../theme';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import {formatNumber} from '../../utils/formatNumber';
 import {formatDate} from '../../utils/formatDate';
-import axios from 'axios';
 import ActionSheet from 'react-native-actions-sheet';
 
 const ProductDetail = ({route}) => {
   const {blogId} = route.params;
+  const navigation = useNavigation();
   const [iconStates, setIconStates] = useState({
     liked: {variant: 'Linear', color: colors.grey(0.6)},
     bookmarked: {variant: 'Linear', color: colors.grey(0.6)},
   });
-  const [selectedBlog, setSelectedBlog] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [selectedBlog, setSelectedBlog] = useState(null);
   const actionSheetRef = useRef(null);
-
   const openActionSheet = () => {
     actionSheetRef.current?.show();
   };
-
   const closeActionSheet = () => {
     actionSheetRef.current?.hide();
   };
-
   useEffect(() => {
-    getBlogById();
+    const subscriber = firestore()
+      .collection('product')
+      .doc(blogId)
+      .onSnapshot(documentSnapshot => {
+        const blogData = documentSnapshot.data();
+        if (blogData) {
+          console.log('Product data: ', blogData);
+          setSelectedBlog(blogData);
+        } else {
+          console.log(`Product with ID ${blogId} not found.`);
+        }
+      });
+    setLoading(false);
+    return () => subscriber();
   }, [blogId]);
-
-  const getBlogById = async () => {
+  const navigateEdit = () => {
+    closeActionSheet();
+    navigation.navigate('EditProduct', {blogId});
+  };
+  const handleDelete = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get(
-        `https://65718b65d61ba6fcc012e285.mockapi.io/camstoreapp/product/${blogId}`,
-      );
-      setSelectedBlog(response.data);
-      setLoading(false);
+      await firestore()
+        .collection('product')
+        .doc(blogId)
+        .delete()
+        .then(() => {
+          console.log('Product deleted!');
+        });
+      if (selectedBlog?.image) {
+        const imageRef = storage().refFromURL(selectedBlog?.image);
+        await imageRef.delete();
+      }
+      console.log('Product deleted!');
+      closeActionSheet();
+      setSelectedBlog(null);
+      setLoading(false)
+      navigation.navigate('HomeApp');
     } catch (error) {
       console.error(error);
     }
   };
-
-  const navigateEdit = () => {
-    closeActionSheet()
-    navigation.navigate('EditBlog', {blogId})
-  }
-  const handleDelete = async () => {
-   await axios.delete(`https://65718b65d61ba6fcc012e285.mockapi.io/camstoreapp/product/${blogId}`)
-      .then(() => {
-        closeActionSheet()
-        navigation.navigate('HomeApp');
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-
-  const navigation = useNavigation();
   const scrollY = useRef(new Animated.Value(0)).current;
   const diffClampY = Animated.diffClamp(scrollY, 0, 52);
   const headerY = diffClampY.interpolate({
@@ -95,13 +104,12 @@ const ProductDetail = ({route}) => {
       },
     }));
   };
-
   return (
     <View style={styles.container}>
       <Animated.View
         style={[styles.header, {transform: [{translateY: headerY}]}]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowCircleLeft2 color={colors.grey(0.6)} variant="Linear" size={24} />
+          <ArrowLeft color={colors.grey(0.6)} variant="Linear" size={24} />
         </TouchableOpacity>
         <View style={{flexDirection: 'row', justifyContent: 'center', gap: 20}}>
           <Share color={colors.grey(0.6)} variant="Linear" size={24} />
@@ -199,8 +207,7 @@ const ProductDetail = ({route}) => {
             alignItems: 'center',
             paddingVertical: 15,
           }}
-          onPress={navigateEdit}
-          >
+          onPress={navigateEdit}>
           <Text
             style={{
               fontFamily: fontType['Pjs-Medium'],
@@ -246,6 +253,7 @@ const ProductDetail = ({route}) => {
     </View>
   );
 };
+
 export default ProductDetail;
 
 const styles = StyleSheet.create({

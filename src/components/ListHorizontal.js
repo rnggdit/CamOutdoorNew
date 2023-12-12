@@ -9,7 +9,7 @@ import {useNavigation} from '@react-navigation/native';
 
 const ItemHorizontal = ({item, variant, onPress}) => {
   return (
-    <TouchableOpacity style={itemHorizontal.cardItem} onPress={() => navigation.navigate('BlogDetail', {blogId: item.id})}>
+    <TouchableOpacity style={itemHorizontal.cardItem} onPress={() => navigation.navigate('ProductDetail', {blogId: item.id})}>
       <FastImage
         style={itemHorizontal.cardImage}
         source={{

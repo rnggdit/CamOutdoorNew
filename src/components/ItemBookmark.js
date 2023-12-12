@@ -18,7 +18,7 @@ const navigation = useNavigation();
 
 const ItemBookmark = ({item, onPress, variant}) => {
   return (
-    <TouchableOpacity style={styles.cardItem} onPress={()=>navigation.navigate('BlogDetail', {blogId: item.id})}>
+    <TouchableOpacity style={styles.cardItem} onPress={()=>navigation.navigate('ProductDetail', {blogId: item.id})}>
         <FastImage
           style={styles.cardImage}
           source={{

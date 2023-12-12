@@ -11,7 +11,7 @@ const ItemSmall = ({item}) => {
   return (
     <TouchableOpacity
       style={styles.cardItem}
-      onPress={() => navigation.navigate('BlogDetail', {blogId: item.id})}>
+      onPress={() => navigation.navigate('ProductDetail', {blogId: item.id})}>
       <FastImage
         style={styles.cardImage}
         source={{
