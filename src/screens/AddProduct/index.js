@@ -7,6 +7,7 @@ import {fontType, colors} from '../../theme';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 const AddProduct = () => {
   const dataCategory = [
@@ -45,6 +46,7 @@ const AddProduct = () => {
 
     setLoading(true);
     try {
+      const authorId = auth().currentUser.uid;
       await reference.putFile(image);
       const url = await reference.getDownloadURL();
       await firestore().collection('product').add({
@@ -56,6 +58,7 @@ const AddProduct = () => {
         totalComments: productData.totalComments,
         totalLikes: productData.totalLikes,
         createdAt: new Date(),
+        authorId
       });
       setLoading(false);
       console.log('Product added!');
@@ -81,6 +84,10 @@ const AddProduct = () => {
   };
 
   return (
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      enabled>
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -217,6 +224,7 @@ const AddProduct = () => {
         </View>
       )}
     </View>
+    </KeyboardAvoidingView>
   );
 };
 export default AddProduct;

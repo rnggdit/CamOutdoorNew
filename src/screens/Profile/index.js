@@ -1,34 +1,120 @@
-import {ScrollView, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import {Bank, HambergerMenu, Home, Home3, LocationDiscover, Lock1, Lovely, Notification, Profile, ProfileCircle, Setting2, ShoppingCart, Wallet, Wallet2} from 'iconsax-react-native';
-import React from 'react';
+import {ScrollView, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, RefreshControl} from 'react-native';
+import {Bank, HambergerMenu, Home, Home3, LocationDiscover, Lock1, Logout, Lovely, Notification, Profile, ProfileCircle, Setting2, ShoppingCart, Wallet, Wallet2} from 'iconsax-react-native';
+import React, {useEffect, useState, useCallback, useRef} from 'react';
 import FastImage from 'react-native-fast-image';
 import {ProfileData, BlogList} from '../../../data';
 import {ItemSmall} from '../../components';
 import { fontType, colors } from '../../theme';
 import { Edit } from "iconsax-react-native";
 import { useNavigation } from "@react-navigation/native";
+import auth from '@react-native-firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import firestore from '@react-native-firebase/firestore';
+import { formatDate } from '../../utils/formatDate';
+import { formatNumber } from '../../utils/formatNumber';
+import ActionSheet from 'react-native-actions-sheet';
 
-const navigation = useNavigation();
 
-const formatNumber = number => {
-  if (number >= 1000000000) {
-    return (number / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
-  }
-  if (number >= 1000000) {
-    return (number / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-  }
-  if (number >= 1000) {
-    return (number / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
-  }
-  return number.toString();
-};
-
-const verticalData = BlogList.slice(5);
 const ProfileApp = () => {
+  const verticalData = BlogList.slice(5);
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(true);
+  const [blogData, setBlogData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [profileData, setProfileData] = useState(null);
+  const actionSheetRef = useRef(null);
+  const openActionSheet = () => {
+    actionSheetRef.current?.show();
+  };
+  const closeActionSheet = () => {
+    actionSheetRef.current?.hide();
+  };
+  useEffect(() => {
+    const user = auth().currentUser;
+    const fetchBlogData = () => {
+      try {
+        if (user) {
+          const userId = user.uid;
+          const blogCollection = firestore().collection('blog');
+          const query = blogCollection.where('authorId', '==', userId);
+          const unsubscribeBlog = query.onSnapshot(querySnapshot => {
+            const blogs = querySnapshot.docs.map(doc => ({
+              ...doc.data(),
+              id: doc.id,
+            }));
+            setBlogData(blogs);
+            setLoading(false);
+          });
+
+          return () => {
+            unsubscribeBlog();
+          };
+        }
+      } catch (error) {
+        console.error('Error fetching blog data:', error);
+      }
+    };
+
+    const fetchProfileData = () => {
+      try {
+        const user = auth().currentUser;
+        if (user) {
+          const userId = user.uid;
+          const userRef = firestore().collection('users').doc(userId);
+
+          const unsubscribeProfile = userRef.onSnapshot(doc => {
+            if (doc.exists) {
+              const userData = doc.data();
+              setProfileData(userData);
+              fetchBlogData();
+            } else {
+              console.error('Dokumen pengguna tidak ditemukan.');
+            }
+          });
+
+          return () => {
+            unsubscribeProfile();
+          };
+        }
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
+    };
+    fetchBlogData();
+    fetchProfileData();
+  }, []);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      firestore()
+        .collection('blog')
+        .onSnapshot(querySnapshot => {
+          const blogs = [];
+          querySnapshot.forEach(documentSnapshot => {
+            blogs.push({
+              ...documentSnapshot.data(),
+              id: documentSnapshot.id,
+            });
+          });
+          setBlogData(blogs);
+        });
+      setRefreshing(false);
+    }, 1500);
+  }, []);
+  const handleLogout = async () => {
+    try {
+      closeActionSheet();
+      await auth().signOut();
+      await AsyncStorage.removeItem('userData');
+      navigation.replace('Login');
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={profile.tag4}>Akun Saya</Text>
+        <Text style={profile.tag4}>Profile</Text>
         <HambergerMenu color={colors.black()} variant="Linear" size={24} />
       </View>
       <ScrollView>
@@ -41,19 +127,19 @@ const ProfileApp = () => {
         }}>
         <View style={{gap: 15, alignItems: 'baseline'}}>
         <View style={{flexDirection: 'row', gap: 20}}>
-          <FastImage
+        <FastImage
             style={profile.pic}
             source={{
-              uri: ProfileData.profilePict,
+              uri: profileData?.photoUrl,
               headers: {Authorization: 'someAuthToken'},
               priority: FastImage.priority.high,
             }}
             resizeMode={FastImage.resizeMode.cover}
           />
           <View style={{gap: 5, alignItems: 'baseline'}}>
-            <Text style={profile.name}>{ProfileData.name}</Text>
+            <Text style={profile.name}>{profileData?.fullName}</Text>
             <Text style={profile.info}>
-              Member {ProfileData.member}
+              Member since {formatDate(profileData?.createdAt)}
             </Text>
             <View style={{flexDirection: 'row', gap: 20}}>
             <View style={{alignItems: 'center', gap: 5}}>
@@ -104,6 +190,15 @@ const ProfileApp = () => {
           <ProfileCircle color={colors.black()} variant="Linear" size={25} />
           <Text style={profile.tag2}>Privasi Akun</Text>
           </View>
+          <TouchableOpacity
+          onPress={handleLogout}>
+          <View style={{flexDirection: 'row', gap: 10}}>
+          <Logout color={colors.black()} variant="Linear" size={25} />
+          <Text
+            style={profile.tag2}> Log out
+          </Text>
+          </View>
+        </TouchableOpacity>
           </View>
       </ScrollView>
       <Text style={profile.tag3}>Rekomendasi Untuk Anda</Text>
